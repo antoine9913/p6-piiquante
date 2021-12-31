@@ -2,13 +2,12 @@ const Sauce = require('../models/SauceModel');
 
 
 exports.createSauce = (req, res, next) => {
-    const sauce = new Sauce({
-      title: req.body.title,
-      description: req.body.description,
-      imageUrl: req.body.imageUrl,
-      price: req.body.price,
-      userId: req.body.userId
-    });
+  const sauceObject = JSON.parse(req.body.sauce);
+  delete sauceObject._id;
+  const sauce = new Sauce({
+    ...sauceObject,
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+  });
     sauce.save().then(
       () => {
         res.status(201).json({
@@ -52,17 +51,31 @@ exports.createSauce = (req, res, next) => {
 
 
 exports.deleteSauce = (req, res, next) => {
-    Sauce.deleteOne({_id: req.params.id}).then(
-    () => {
-      res.status(200).json({
-        message: 'Supprimé!'
-      });
-    }
-  ).catch(
-    (error) => {
-      res.status(400).json({
-        error: error
-      });
+  Sauce.findOne ({ _id: res.params.id}).then (
+    (sauce) => {
+      if (!sauce) {
+        return res.status(404).json({
+          error: new Error('Objet non trouvé !')
+        });
+      }
+      if (sauce.userId !== req.auth.userId) {
+        return res.status(401).json({
+          error: new Error('requête non autorisé !')
+        });
+      }
+      Sauce.deleteOne({_id: req.params.id}).then(
+        () => {
+          res.status(200).json({
+            message: 'Supprimé!'
+          });
+        }
+        ).catch(
+          (error) => {
+            res.status(400).json({
+              error: error
+            });
+          }
+      );
     }
   );
 };
