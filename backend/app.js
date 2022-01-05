@@ -4,8 +4,8 @@ const mongoose = require('mongoose');
 const dotenv = require("dotenv").config();
 const path = require('path');
 
+const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
-const sauceRoutes = require('./routes/sauce')
 
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
@@ -22,10 +22,6 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
 });
-
-app.use((req, res) => {
-    res.json({ message: 'Votre requête a bien été reçue !' }); 
- });
 
 app.use(bodyParser.json());
 
