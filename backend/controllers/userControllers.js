@@ -1,10 +1,16 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv").config();
+const validator = require("email-validator");
 
 const User = require('../models/UserModel');
 
 exports.signup = (req, res, next) => {
+  if (!mailValidator.validate(req.body.email)) {
+  throw {
+    error: "L'adresse mail n'est pas valide !",
+  };
+  } else{
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
         const user = new User({
@@ -16,7 +22,8 @@ exports.signup = (req, res, next) => {
           .catch(error => res.status(400).json({ error }));
       })
       .catch(error => res.status(500).json({ error }));
-  };
+  }
+};
 
 exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })
