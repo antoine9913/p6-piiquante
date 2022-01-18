@@ -107,7 +107,7 @@ exports.giveOpinion = (req, res, next) => {
         $push: { usersLiked: req.body.userId },
       }
     )
-      .then((sauce) => res.status(200).json({ message: "Un like de plus !" }))
+      .then(() => res.status(200).json({ message: "Un like de plus !" }))
       .catch((error) => res.status(400).json({ error }));
   }
 
@@ -120,7 +120,7 @@ exports.giveOpinion = (req, res, next) => {
         $push: { usersDisliked: req.body.userId },
       }
     )
-      .then((sauce) =>
+      .then(() =>
         res.status(200).json({ message: "Un dislike de plus !" })
       )
       .catch((error) => res.status(400).json({ error }));
@@ -135,7 +135,7 @@ exports.giveOpinion = (req, res, next) => {
             { _id: req.params.id },
             { $pull: { usersLiked: req.body.userId }, $inc: { likes: -1 } }
           )
-            .then((sauce) => {
+            .then(() => {
               res.status(200).json({ message: "Un like de moins !" });
             })
             .catch((error) => res.status(400).json({ error }));
@@ -147,7 +147,7 @@ exports.giveOpinion = (req, res, next) => {
               $inc: { dislikes: -1 },
             }
           )
-            .then((sauce) => {
+            .then(() => {
               res.status(200).json({ message: "Un dislike de moins !" });
             })
             .catch((error) => res.status(400).json({ error }));
